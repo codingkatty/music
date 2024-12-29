@@ -19,3 +19,9 @@ header{
     height: 95%;
     border: 1px solid #fff;
 }
+
+header .menu_side , .song_side{
+    width: 25%;
+    height: 90%;
+    border: 1px solid #fff;
+}
