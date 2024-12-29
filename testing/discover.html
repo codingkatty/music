@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Player</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #172554;
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+      }
+
+      .sidebar {
+        width: 250px;
+        background-color: #172554;
+        padding: 20px;
+        border-right: 1px solid #1e3a8a;
+      }
+
+      .search-box {
+        background-color: rgba(30, 58, 138, 0.5);
+        border-radius: 6px;
+        padding: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+      }
+
+      .search-box input {
+        background: transparent;
+        border: none;
+        color: white;
+        width: 100%;
+        padding-left: 10px;
+        outline: none;
+      }
+
+      .playlist-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        cursor: pointer;
+      }
+
+      .playlist-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        margin-right: 12px;
+        background: linear-gradient(to bottom right, #9333ea, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .profile-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #4b5563;
+        margin: 5px;
+        margin-right: 10px;
+      }
+
+      .playlist-info {
+        color: white;
+      }
+
+      .playlist-info .subtitle {
+        font-size: 12px;
+        color: #9ca3af;
+      }
+
+      .main-content {
+        flex: 1;
+        padding: 20px;
+      }
+
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .song-search {
+        background-color: rgba(30, 58, 138, 0.5);
+        border-radius: 20px;
+        padding: 8px 20px;
+        width: 250px;
+        display: flex;
+        align-items: center;
+      }
+
+      .song-search input {
+        background: transparent;
+        border: none;
+        color: white;
+        width: 100%;
+        padding-left: 10px;
+        outline: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 24px;
+      }
+
+      .nav-links a {
+        color: #9ca3af;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .nav-links a.active {
+        color: white;
+        font-weight: 500;
+      }
+
+      .album-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+
+      .album-card {
+        background-color: rgba(30, 58, 138, 0.3);
+        padding: 16px;
+        border-radius: 8px;
+      }
+
+      .album-art {
+        width: 100%;
+        aspect-ratio: 1;
+        background-color: #4b5563;
+        border-radius: 8px;
+        margin-bottom: 12px;
+      }
+
+      .cd-player {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        width: 48px;
+        height: 48px;
+        background-color: #7e22ce;
+        border-radius: 8px;
+      }
+
+      /* Drag and drop styles */
+      .album-art.draggable {
+        cursor: move;
+      }
+
+      .cd-player.droppable {
+        transition: transform 0.2s;
+      }
+
+      .cd-player.droppable.drag-over {
+        transform: scale(1.1);
+        background-color: #9333ea;
+      }
+
+      .cd-player.playing {
+        animation: spin 3s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="search-box">
+        <svg width="20" height="20" fill="none" stroke="#9ca3af">
+          <path
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        <input type="text" placeholder="Search for playlists..." />
+      </div>
+      <div class="playlist-item">
+        <div class="playlist-icon">♥</div>
+        <div class="playlist-info">
+          <div>Liked songs</div>
+          <div class="subtitle">Playlist • 10 songs</div>
+        </div>
+      </div>
+      <div class="playlist-item">
+        <div class="profile-icon"></div>
+        <div class="playlist-info">LISA</div>
+      </div>
+      <div class="playlist-item">
+        <div class="profile-icon"></div>
+        <div class="playlist-info">Taylor Swift</div>
+      </div>
+      <div class="playlist-item">
+        <div class="profile-icon"></div>
+        <div class="playlist-info">Stray Kids</div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="top-bar">
+        <div class="song-search">
+          <svg width="20" height="20" fill="none" stroke="#9ca3af">
+            <path
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <input type="text" placeholder="Search for songs..." />
+        </div>
+        <div class="nav-links">
+          <a href="#" class="active">Home</a>
+          <a href="#">Discover</a>
+          <a href="#">Chill</a>
+        </div>
+        <div class="profile-icon"></div>
+      </div>
+      <div class="album-grid">
+        <div class="album-card">
+          <div class="album-art draggable" draggable="true"></div>
+        </div>
+        <div class="album-card">
+          <div class="album-art draggable" draggable="true"></div>
+        </div>
+        <div class="album-card">
+          <div class="album-art draggable" draggable="true"></div>
+        </div>
+        <div class="album-card">
+          <div class="album-art draggable" draggable="true"></div>
+        </div>
+      </div>
+    </div>
+    <div class="cd-player droppable"></div>
+
+    <script>
+      const draggables = document.querySelectorAll(".draggable");
+      const droppable = document.querySelector(".droppable");
+
+      draggables.forEach((draggable) => {
+        draggable.addEventListener("dragstart", () => {
+          draggable.classList.add("dragging");
+        });
+
+        draggable.addEventListener("dragend", () => {
+          draggable.classList.remove("dragging");
+        });
+      });
+
+      droppable.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        droppable.classList.add("drag-over");
+      });
+
+      droppable.addEventListener("dragleave", () => {
+        droppable.classList.remove("drag-over");
+      });
+
+      droppable.addEventListener("drop", (e) => {
+        e.preventDefault();
+        droppable.classList.remove("drag-over");
+        droppable.classList.add("playing");
+      });
+
+      droppable.addEventListener("click", () => {
+        droppable.classList.toggle("playing");
+      });
+    </script>
+  </body>
+</html>
