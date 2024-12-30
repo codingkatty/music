@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #00205b;
+        color: white;
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        background-color: #001845;
+        height: 100vh;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar-search {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-content {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+      }
+
+      .sidebar-section {
+        margin-bottom: 30px;
+      }
+
+      .sidebar-title {
+        font-size: 16px;
+        margin-bottom: 15px;
+        color: #999;
+      }
+
+      .sidebar-item {
+        padding: 8px 0;
+        cursor: pointer;
+        color: #ccc;
+      }
+
+      .sidebar-item:hover {
+        color: white;
+      }
+
+      /* Main Content Styles */
+      .main-content {
+        padding: 20px;
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      /* Search Bars Styles */
+      .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .search-input {
+        background-color: rgba(255, 255, 255, 0.08);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        padding: 10px 35px;
+        width: 100%;
+        font-size: 14px;
+      }
+
+      .search-input::placeholder {
+        color: #808080;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        color: #808080;
+        font-size: 14px;
+      }
+
+      .plus-button {
+        background: none;
+        border: none;
+        color: white;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .plus-button:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+
+      .dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #282828;
+        border-radius: 5px;
+        width: 200px;
+        margin-top: 5px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+
+      .dropdown-item {
+        padding: 12px 15px;
+        color: white;
+        text-decoration: none;
+        display: block;
+        font-size: 14px;
+      }
+
+      .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+
+      .show {
+        display: block;
+      }
+
+      /* Main Search */
+      .main-search {
+        margin-bottom: 30px;
+      }
+
+      /* Songs Grid */
+      .songs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 20px 0;
+      }
+
+      .song-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .song-card:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .song-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .song-artist {
+        font-size: 14px;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Playlist Search at Top of Sidebar -->
+      <div class="sidebar-search">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search for playlists..."
+          />
+          <button class="plus-button" onclick="toggleDropdown()">+</button>
+
+          <div class="dropdown" id="dropdown">
+            <a href="#" class="dropdown-item">Create a new playlist</a>
+            <a href="#" class="dropdown-item">Create a folder for playlists</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Content -->
+      <div class="sidebar-content">
+        <div class="sidebar-section">
+          <div class="sidebar-title">LIBRARY</div>
+          <div class="sidebar-item">Liked Songs</div>
+          <div class="sidebar-item">Your Episodes</div>
+          <div class="sidebar-item">Artists</div>
+          <div class="sidebar-item">Albums</div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">PLAYLISTS</div>
+          <div class="sidebar-item">Workout Mix</div>
+          <div class="sidebar-item">Chill Vibes</div>
+          <div class="sidebar-item">Road Trip</div>
+          <div class="sidebar-item">Party Mix</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Main Search -->
+      <div class="main-search">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search for songs..."
+          />
+        </div>
+      </div>
+
+      <!-- Songs Grid -->
+      <div class="songs-grid">
+        <div class="song-card">
+          <div class="song-title">Song Name 1</div>
+          <div class="song-artist">Artist 1</div>
+        </div>
+        <div class="song-card">
+          <div class="song-title">Song Name 2</div>
+          <div class="song-artist">Artist 2</div>
+        </div>
+        <div class="song-card">
+          <div class="song-title">Song Name 3</div>
+          <div class="song-artist">Artist 3</div>
+        </div>
+        <!-- Add more song cards as needed -->
+      </div>
+    </div>
+
+    <script>
+      function toggleDropdown() {
+        const dropdown = document.getElementById("dropdown");
+        dropdown.classList.toggle("show");
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function closeDropdown(e) {
+          if (!e.target.matches(".plus-button")) {
+            if (dropdown.classList.contains("show")) {
+              dropdown.classList.remove("show");
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
