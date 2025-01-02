@@ -10,33 +10,6 @@
 </head>
 
 <body>
-  <div class="sidebar">
-    <div class="search-box">
-      <svg width="20" height="20" fill="none" stroke="#9ca3af">
-        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2" stroke-linecap="round" />
-      </svg>
-      <input type="text" placeholder="Search for playlists..." />
-    </div>
-    <div class="playlist-item">
-      <div class="playlist-icon">♥</div>
-      <div class="playlist-info">
-        <div>Liked songs</div>
-        <div class="subtitle">Playlist • 10 songs</div>
-      </div>
-    </div>
-    <div class="playlist-item">
-      <div class="profile-icon"></div>
-      <div class="playlist-info">LISA</div>
-    </div>
-    <div class="playlist-item">
-      <div class="profile-icon"></div>
-      <div class="playlist-info">Taylor Swift</div>
-    </div>
-    <div class="playlist-item">
-      <div class="profile-icon"></div>
-      <div class="playlist-info">Stray Kids</div>
-    </div>
-  </div>
   <div class="main-content">
     <div class="top-bar">
       <div class="song-search">
@@ -53,54 +26,18 @@
       </div>
       <div class="profile-icon"></div>
     </div>
-<<<<<<< HEAD:testing/discover.html
-    <div class="album-grid">
-      <!-- Album cards will be dynamically generated -->
-=======
-    <div class="main-content">
-      <div class="top-bar">
-        <div class="song-search">
-          <svg width="20" height="20" fill="none" stroke="#9ca3af">
-            <path
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-          <input type="text" placeholder="Search for songs..." />
-        </div>
-        <div class="nav-links">
-          <a href="index2.html">Home</a>
-          <a href="discover.html">Discover</a>
-          <a href="chill.html">Chill</a>
-        </div>
-        <div class="profile-icon"></div>
-      </div>
-      <div class="album-grid">
-        <div class="album-card">
-          <div class="album-art draggable" draggable="true"></div>
-        </div>
-        <div class="album-card">
-          <div class="album-art draggable" draggable="true"></div>
-        </div>
-        <div class="album-card">
-          <div class="album-art draggable" draggable="true"></div>
-        </div>
-        <div class="album-card">
-          <div class="album-art draggable" draggable="true"></div>
-        </div>
-      </div>
->>>>>>> 16673f266cb84d3717925e0b07ef0b250a460b40:discover.html
+    <h2>Recommended for You</h2>
+    <div class="album-grid" id="recommended-grid">
+      <!-- Recommended songs will be dynamically generated -->
+    </div>
+    <h2>Discover New</h2>
+    <div class="album-grid" id="discover-new-grid">
+      <!-- Discover new songs will be dynamically generated -->
     </div>
   </div>
   <div class="cd-player droppable">
     <div class="cd-player-inner"></div>
   </div>
-
-  <!-- Remove or comment out the inline drag-and-drop script to avoid duplication -->
-  <!-- <script>
-    // Removed inline drag logic to avoid conflict with api.js setupDragAndDrop()
-  </script> -->
 
   <script>
     window.onSpotifyWebPlaybackSDKReady = () => {

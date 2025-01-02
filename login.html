@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Daily Dose of Music</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #002963;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #004080;
+            color: white;
+        }
+
+        .preferences {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .preference-item {
+            background-color: #004080;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .preference-item.selected {
+            background-color: #5271ff;
+        }
+
+        .spotify-btn {
+            background-color: #1DB954;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navigation">
+                <div class="navigation-items">
+                    <a href="index.html">Home</a>
+                    <a href="discover.html">Discover</a>
+                    <a href="about.html">About</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <form action="login.php" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <h3>Music Preferences</h3>
+            <div class="preferences">
+                <div class="preference-item" data-genre="pop">Pop</div>
+                <div class="preference-item" data-genre="rock">Rock</div>
+                <div class="preference-item" data-genre="hiphop">Hip Hop</div>
+                <div class="preference-item" data-genre="jazz">Jazz</div>
+                <div class="preference-item" data-genre="classical">Classical</div>
+                <div class="preference-item" data-genre="electronic">Electronic</div>
+            </div>
+            <input type="hidden" name="preferences" id="preferences">
+            
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle preference selection
+        const preferences = document.querySelectorAll('.preference-item');
+        const preferencesInput = document.getElementById('preferences');
+        const selectedPreferences = new Set();
+
+        preferences.forEach(pref => {
+            pref.addEventListener('click', () => {
+                pref.classList.toggle('selected');
+                const genre = pref.dataset.genre;
+                
+                if (selectedPreferences.has(genre)) {
+                    selectedPreferences.delete(genre);
+                } else {
+                    selectedPreferences.add(genre);
+                }
+                
+                preferencesInput.value = Array.from(selectedPreferences).join(',');
+            });
+        });
+    </script>
+</body>
+</html>
