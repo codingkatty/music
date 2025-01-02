@@ -3,98 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pixel Music Player</title>
-    <!-- Import the required fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Playlist View</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@400;500&family=Press+Start+2P&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
     <style>
-      * {
+      body {
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
+        font-family: Arial, sans-serif;
         background-color: #00205b;
-        min-height: 100vh;
-        padding: 20px;
-      }
-
-      .top-nav {
-        display: flex;
-        justify-content: flex-end;
-        gap: 20px;
-        margin-bottom: 30px;
-        color: white;
-        padding-right: 20px;
-        font-family: "Open Sans", sans-serif;
-      }
-
-      .top-nav a {
-        color: #ffffff80;
-        text-decoration: none;
-        font-size: 14px;
-      }
-
-      .top-nav a.active {
         color: white;
       }
-
-      .profile-icon {
-        width: 24px;
-        height: 24px;
-        background: #ccc;
-        border-radius: 50%;
-      }
-
       .container {
         display: flex;
-        gap: 40px;
+        height: 100vh;
       }
-
-      .playlists {
-        width: 200px;
-        font-family: "Poppins", sans-serif;
+      .left-side {
+        flex: 1;
+        padding: 20px;
       }
-
-      .playlists h2 {
-        color: white;
-        font-size: 16px;
+      .right-side {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      h1 {
+        font-family: "Montserrat", sans-serif;
+        font-size: 30px;
         margin-bottom: 20px;
       }
-
       .playlist-grid {
         display: grid;
-        gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 25px;
       }
-
       .playlist-item {
-        background: #1a3b8f;
-        border-radius: 8px;
+        border: 2px solid #5663f7;
+        border-radius: 20px;
         padding: 10px;
-        width: 80px;
-        height: 80px;
-        display: inline-flex;
-        flex-direction: column;
-        color: white;
-        text-decoration: none;
-        font-size: 12px;
-        position: relative;
-        border: 2px solid #2a4b9f;
-        font-family: "Poppins", sans-serif;
+        text-align: center;
       }
-
-      .playlist-item .box-icon {
-        width: 40px;
-        height: 40px;
-        background: #ffd700;
-        margin-bottom: 5px;
-        image-rendering: pixelated;
+      .playlist-icon {
+        width: 60px;
+        height: 70px;
+        margin: 0 auto;
+        background-color: #ffd700;
         clip-path: polygon(
           0% 20%,
           20% 0%,
@@ -106,139 +63,90 @@
           0% 80%
         );
       }
-
-      .playlist-item .songs {
-        font-size: 10px;
-        color: #ffffff80;
+      .playlist-name {
+        margin-top: 10px;
+        font-size: 14px;
       }
-
-      .vinyl-player {
+      .song-count {
+        font-size: 12px;
+        color: #ccc;
+      }
+      .cd-player {
         width: 200px;
         height: 200px;
-        background: #8b4513;
-        border-radius: 8px;
+        background-color: #8b4513;
+        border-radius: 50%;
+        margin-bottom: 20px;
         position: relative;
-        margin-top: 40px;
-        border: 4px solid #a0522d;
-        image-rendering: pixelated;
       }
-
-      .vinyl-disc {
-        width: 140px;
-        height: 140px;
-        background: #000;
+      .cd {
+        width: 160px;
+        height: 160px;
+        background-color: #000;
         border-radius: 50%;
         position: absolute;
         top: 20px;
         left: 20px;
       }
-
-      .vinyl-center {
+      .cd-center {
         width: 20px;
         height: 20px;
-        background: #32cd32;
+        background-color: #32cd32;
         border-radius: 50%;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
       }
-
       .discord-status {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #7289da;
-        color: white;
-        padding: 8px 16px;
+        background-color: #7289da;
+        padding: 10px 20px;
         border-radius: 20px;
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        font-family: "Press Start 2P", cursive;
       }
-
-      .discord-status::before {
-        content: "";
-        display: block;
-        width: 8px;
-        height: 8px;
-        background: #32cd32;
+      .discord-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #32cd32;
         border-radius: 50%;
-      }
-
-      /* Drag and drop styles */
-      .playlist-item.draggable {
-        cursor: move;
-      }
-
-      .vinyl-player.droppable.drag-over {
-        border-color: #32cd32;
-      }
-
-      .vinyl-player.playing .vinyl-disc {
-        animation: spin 3s linear infinite;
-      }
-
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
+        margin-right: 10px;
       }
     </style>
   </head>
   <body>
-    <header>
-      <nav>
-        <div class="navigation">
-          <div class="navigation-items">
-            <a href="index2.html">Home</a>
-            <a href="discover.html">Discover</a>
-            <a href="chill.html">Chill</a>
-          </div>
-        </div>
-        <div class="profile">
-          <img src="images/photo_2024-12-13_19-27-20.jpg" alt="Avatar" />
-        </div>
-      </nav>
-    </header>
-
     <div class="container">
-      <div class="playlists">
-        <h2>Playlists</h2>
+      <div class="left-side">
+        <h1>Playlist</h1>
         <div class="playlist-grid">
-          <div class="playlist-item draggable" draggable="true">
-            <div class="box-icon"></div>
-            <div>Favourite</div>
-            <div class="songs">8 songs</div>
+          <div class="playlist-item">
+            <img src="images/1.png" />
+            <div class="playlist-name">Chill Vibes</div>
+            <div class="song-count">12 songs</div>
           </div>
-          <div class="playlist-item draggable" draggable="true">
-            <div class="box-icon"></div>
-            <div>Name</div>
-            <div class="songs">8 songs</div>
+          <div class="playlist-item">
+            <img src="images/2.png" />
+            <div class="playlist-name">Workout Mix</div>
+            <div class="song-count">15 songs</div>
           </div>
-          <div class="playlist-item draggable" draggable="true">
-            <div class="box-icon"></div>
-            <div>Name</div>
-            <div class="songs">13 songs</div>
+          <div class="playlist-item">
+            <img src="images/3.png" />
+            <div class="playlist-name">Study Session</div>
+            <div class="song-count">20 songs</div>
           </div>
+          <!-- Add more playlist items as needed -->
         </div>
       </div>
-
-      <div class="vinyl-player droppable">
-        <div class="vinyl-disc">
-          <div class="vinyl-center"></div>
+      <div class="right-side">
+        <img src="images/Musicplayer.png" />
+        <div class="discord-status">
+          <div class="discord-dot"></div>
+          Discord Connected
         </div>
       </div>
     </div>
-
-    <div class="discord-status">Discord connected</div>
-
+  </body>
+</html>
     <script>
       const draggables = document.querySelectorAll(".draggable");
       const droppable = document.querySelector(".droppable");
