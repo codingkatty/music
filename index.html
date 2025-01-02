@@ -2,18 +2,58 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
     <title>Daily Dose of Music</title>
-  </head>
 
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
   <body>
     <header>
-      <div class="menu_side"></div>
-      <div class="song_side"></div>
-      <div class="master_play"></div>
+      <nav>
+        <div class="navigation">
+          <div class="navigation-items">
+            <a href="index">Home</a>
+            <a href="discover">Discover</a>
+            <a href="chill">Chill</a>
+          </div>
+        </div>
+        <div class="profile">
+          <img src="images/photo_2024-12-13_19-27-20.jpg" alt="Avatar" />
+        </div>
+      </nav>
     </header>
-    <script src="app.js"></script>
+
+    <main>
+      <div class="main-container">
+        <div class="player-card">
+          <div class="player-avatar">
+            <img src="images/avatar2.png" alt="Character" />
+          </div>
+          <p>99 EXP</p>
+          <p>LV 8</p>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <img src="images/download.jpeg" alt="Music Cover" class="cover" />
+          <button>▶</button>
+        </div>
+
+        <div class="title">
+          <h1>Daily Dose of Music <span>⭐</span></h1>
+        </div>
+      </div>
+
+      <div class="scrolling-text">
+        <p>
+          (scrolling) Now playing ****** by ****** // Use headphones for best
+          quality // Auto
+        </p>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
   </body>
 </html>
