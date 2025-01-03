@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Daily Dose of Music</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .signup-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #002963;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 90%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #004080;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(82, 113, 255, 0.5);
+        }
+
+        .genres-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .genre-item {
+            background-color: #004080;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .genre-item.selected {
+            background-color: #5271ff;
+            transform: translateY(-1px);
+        }
+
+        .genre-item:hover {
+            background-color: #0055a4;
+        }
+
+        button[type="submit"] {
+            background-color: #5271ff;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #4161ff;
+            transform: translateY(-1px);
+        }
+
+        h2, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .search-genres {
+            margin-bottom: 16px;
+        }
+
+        .search-genres input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #004080;
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .error-message {
+            color: #ff4444;
+            background-color: rgba(255, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navigation">
+                <div class="navigation-items">
+                    <a href="index.html">Home</a>
+                    <a href="discover.html">Discover</a>
+                    <a href="about.html">About</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="signup-container">
+        <h2>Create Account</h2>
+        <div id="errorMessage" class="error-message">You don't have an account yet. Please sign up.</div>
+        <form action="signup.php" method="POST" id="signupForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+            
+            <h3>Music Preferences</h3>
+            <div class="search-genres">
+                <input type="text" id="genreSearch" placeholder="Search genres...">
+            </div>
+            <div class="genres-grid" id="genresGrid"></div>
+            <input type="hidden" name="genres" id="selectedGenres">
+            
+            <button type="submit">Create Account</button>
+        </form>
+    </div>
+
+    <script>
+        const genres = ["acoustic","afrobeat","alt-rock","alternative","ambient","anime","black-metal","bluegrass","blues","bossanova","brazil","breakbeat","british","cantopop","chicago-house","children","chill","classical","club","comedy","country","dance","dancehall","death-metal","deep-house","detroit-techno","disco","disney","drum-and-bass","dub","dubstep","edm","electro","electronic","emo","folk","forro","french","funk","garage","german","gospel","goth","grindcore","groove","grunge","guitar","happy","hard-rock","hardcore","hardstyle","heavy-metal","hip-hop","holidays","honky-tonk","house","idm","indian","indie","indie-pop","industrial","iranian","j-dance","j-idol","j-pop","j-rock","jazz","k-pop","kids","latin","latino","malay","mandopop","metal","metal-misc","metalcore","minimal-techno","movies","mpb","new-age","new-release","opera","pagode","party","philippines-opm","piano","pop","pop-film","post-dubstep","power-pop","progressive-house","psych-rock","punk","punk-rock","r-n-b","rainy-day","reggae","reggaeton","road-trip","rock","rock-n-roll","rockabilly","romance","sad","salsa","samba","sertanejo","show-tunes","singer-songwriter","ska","sleep","songwriter","soul","soundtracks","spanish","study","summer","swedish","synth-pop","tango","techno","trance","trip-hop","turkish","work-out","world-music"];
+        
+        const genresGrid = document.getElementById('genresGrid');
+        const selectedGenres = new Set();
+        const selectedGenresInput = document.getElementById('selectedGenres');
+        const genreSearch = document.getElementById('genreSearch');
+
+        function createGenreElements(genresToShow) {
+            genresGrid.innerHTML = '';
+            genresToShow.forEach(genre => {
+                const genreElement = document.createElement('div');
+                genreElement.className = `genre-item${selectedGenres.has(genre) ? ' selected' : ''}`;
+                genreElement.textContent = genre;
+                genreElement.addEventListener('click', () => {
+                    genreElement.classList.toggle('selected');
+                    if (selectedGenres.has(genre)) {
+                        selectedGenres.delete(genre);
+                    } else {
+                        selectedGenres.add(genre);
+                    }
+                    selectedGenresInput.value = Array.from(selectedGenres).join(',');
+                });
+                genresGrid.appendChild(genreElement);
+            });
+        }
+
+        genreSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredGenres = genres.filter(genre => 
+                genre.toLowerCase().includes(searchTerm)
+            );
+            createGenreElements(filteredGenres);
+        });
+
+        // Initial creation of genre elements
+        createGenreElements(genres);
+
+        // Form validation
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (selectedGenres.size === 0) {
+                e.preventDefault();
+                alert('Please select at least one genre!');
+                return;
+            }
+        });
+
+        // Add at the end of the script
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorMsg = document.getElementById('errorMessage');
+        if (urlParams.get('error') === '1') {
+            errorMsg.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
