@@ -1,6 +1,6 @@
 const CLIENT_ID = 'f9947aa68051427282c99c3f165e35f3'; // Replace with your actual Client ID
 const CLIENT_SECRET = 'b3ab18efe5444917b39acea2a0f9f722'; // Replace with your actual Client Secret
-const REDIRECT_URI = 'http://127.0.0.1:5500/discover.html';
+const REDIRECT_URI = 'http://localhost/music/discover.html';
 const SCOPES = [
   'user-read-email',
   'user-read-private',
