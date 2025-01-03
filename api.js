@@ -9,6 +9,7 @@ const SCOPES = [
 ].join(' '); // Include any additional scopes you need
 
 const DEFAULT_ALBUM_ART = 'https://via.placeholder.com/150';
+const DISCOVER_GENRES = ['pop', 'rock', 'hip-hop', 'electronic', 'jazz', 'classical', 'r-n-b', 'indie'];
 
 class SpotifyAPI {
   constructor() {
@@ -17,34 +18,88 @@ class SpotifyAPI {
     this.tokenExpiry = parseInt(localStorage.getItem('spotify_token_expiry'), 10);
     this.clientId = CLIENT_ID;
     this.clientSecret = CLIENT_SECRET;
-
+    this.createModal();
     this.init();
+  }
+
+  createModal() {
+    const modal = document.createElement('div');
+    modal.className = 'spotify-modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h2>Connect to Spotify</h2>
+        <p>Please connect your Spotify account to continue</p>
+        <button id="connectSpotify" class="connect-button">Connect with Spotify</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('connectSpotify').addEventListener('click', () => {
+      this.redirectToSpotifyAuth();
+    });
+  }
+
+  showModal() {
+    document.querySelector('.spotify-modal').classList.add('show');
+  }
+
+  hideModal() {
+    document.querySelector('.spotify-modal').classList.remove('show');
   }
 
   // Initialize the API by handling authentication
   async init() {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      
+      // Check if we have valid tokens
+      const hasValidTokens = this.accessToken && 
+                           this.refreshToken && 
+                           this.tokenExpiry && 
+                           new Date().getTime() < this.tokenExpiry;
 
-    if (code) {
-      await this.getAccessToken(code);
-      // Remove the code parameter from the URL for cleanliness
-      window.history.replaceState({}, document.title, REDIRECT_URI);
-      this.loadDefaultView();
-    } else if (this.accessToken && this.refreshToken && this.tokenExpiry) {
-      if (new Date().getTime() > this.tokenExpiry) {
-        await this.refreshAccessToken();
+      if (code) {
+        await this.getAccessToken(code);
+        window.history.replaceState({}, document.title, REDIRECT_URI);
+        this.hideModal();
+        this.loadDefaultView();
+      } else if (hasValidTokens) {
+        console.log('Using existing tokens');
+        this.hideModal();
+        this.loadDefaultView();
+      } else {
+        console.log('No valid tokens found - showing connect modal');
+        localStorage.clear(); // Clear any stale tokens
+        this.showModal();
       }
-      this.loadDefaultView();
-    } else {
-      this.redirectToSpotifyAuth();
+    } catch (error) {
+      console.error('Init error:', error);
+      this.showModal();
     }
   }
 
   // Redirect user to Spotify authorization flow
   redirectToSpotifyAuth() {
-    const url = `https://accounts.spotify.com/authorize?client_id=${this.clientId}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
-    window.location.href = url;
+    try {
+      // Clear any existing tokens
+      localStorage.clear();
+      
+      const state = Math.random().toString(36).substring(7);
+      localStorage.setItem('spotify_auth_state', state);
+
+      const url = new URL('https://accounts.spotify.com/authorize');
+      url.searchParams.append('client_id', this.clientId);
+      url.searchParams.append('response_type', 'code');
+      url.searchParams.append('redirect_uri', REDIRECT_URI);
+      url.searchParams.append('state', state);
+      url.searchParams.append('scope', SCOPES);
+      
+      console.log('Redirecting to Spotify auth...');
+      window.location.href = url.toString();
+    } catch (error) {
+      console.error('Auth redirect error:', error);
+    }
   }
 
   // Exchange authorization code for access token
@@ -141,44 +196,68 @@ class SpotifyAPI {
 
   // Fetch with token refresh
   async fetchWithTokenRefresh(url, options = {}) {
-    if (this.tokenExpiry && new Date().getTime() > this.tokenExpiry) {
-      await this.refreshAccessToken();
-    }
+    try {
+      if (!this.accessToken) {
+        throw new Error('No access token available');
+      }
 
-    options.headers = options.headers || {};
-    options.headers['Authorization'] = `Bearer ${this.accessToken}`;
+      if (this.tokenExpiry && new Date().getTime() > this.tokenExpiry) {
+        console.log('Token expired, refreshing...');
+        await this.refreshAccessToken();
+      }
 
-    const response = await fetch(url, options);
-
-    if (response.status === 401) {
-      console.warn("Access token expired or invalid. Refreshing token...");
-      await this.refreshAccessToken();
+      options.headers = options.headers || {};
       options.headers['Authorization'] = `Bearer ${this.accessToken}`;
-      return fetch(url, options);
-    }
 
-    return response;
+      const response = await fetch(url, options);
+
+      if (response.status === 401 || response.status === 403) {
+        console.log('Token invalid, refreshing...');
+        await this.refreshAccessToken();
+        options.headers['Authorization'] = `Bearer ${this.accessToken}`;
+        return fetch(url, options);
+      }
+
+      return response;
+    } catch (error) {
+      console.error('Fetch error:', error);
+      this.showModal();
+      throw error;
+    }
   }
 
   // Load recommended & popular tracks by user preferences
-  async loadDefaultView(seedGenres = 'pop,rock') {
+  async loadDefaultView() {
+    let seedGenres = 'pop,rock'; // Default genres
+    this.toggleSectionVisibility(false);
+
     try {
-      // Use the search endpoint with genre filters
-      const searchResponse = await this.fetchWithTokenRefresh(
-        `https://api.spotify.com/v1/search?q=genre:${encodeURIComponent(seedGenres)}&type=track&limit=20`,
-        {
-          method: "GET",
-        }
+      // Load recommended tracks
+      const recommendedResponse = await this.fetchWithTokenRefresh(
+        `https://api.spotify.com/v1/search?q=genre:${encodeURIComponent(seedGenres)}&type=track&limit=15`,
+        { method: "GET" }
       );
 
-      if (!searchResponse.ok) {
-        console.error("Failed to fetch search:", searchResponse.status, searchResponse.statusText);
-        return;
+      if (!recommendedResponse.ok) {
+        throw new Error(`Recommended search failed: ${recommendedResponse.status}`);
       }
 
-      const searchData = await searchResponse.json();
-      console.log('Search Results:', searchData.tracks?.items);
-      this.displaySearchResults(searchData.tracks?.items || [], 'recommended-grid');
+      const recommendedData = await recommendedResponse.json();
+      this.displaySearchResults(recommendedData.tracks?.items || [], 'recommended-grid');
+
+      // Load discover tracks with random genre
+      const randomGenre = DISCOVER_GENRES[Math.floor(Math.random() * DISCOVER_GENRES.length)];
+      const discoverResponse = await this.fetchWithTokenRefresh(
+        `https://api.spotify.com/v1/search?q=genre:${randomGenre}&type=track&limit=15`,
+        { method: "GET" }
+      );
+
+      if (!discoverResponse.ok) {
+        throw new Error(`Discover search failed: ${discoverResponse.status}`);
+      }
+
+      const discoverData = await discoverResponse.json();
+      this.displaySearchResults(discoverData.tracks?.items || [], 'discover-new-grid');
     } catch (error) {
       console.error("Error loading default view:", error);
     }
@@ -194,9 +273,24 @@ class SpotifyAPI {
       return;
     }
 
-    tracks.forEach(track => {
+    tracks.forEach(async (track) => {
       if (!track) return;
       const artUrl = track.album?.images?.[0]?.url || DEFAULT_ALBUM_ART;
+
+      // Fetch artist information to get genre
+      const artistId = track.artists[0]?.id;
+      let genre = 'unknown';
+      if (artistId) {
+        const artistResponse = await this.fetchWithTokenRefresh(
+          `https://api.spotify.com/v1/artists/${artistId}`,
+          { method: "GET" }
+        );
+        if (artistResponse.ok) {
+          const artistData = await artistResponse.json();
+          genre = artistData.genres[0] || 'unknown';
+        }
+      }
+
       // Build the track card
       const albumCard = document.createElement('div');
       albumCard.className = 'album-card';
@@ -204,7 +298,7 @@ class SpotifyAPI {
         <div class="album-art" 
              style="background-image: url('${artUrl}')">
           <div class="album-overlay">
-            <button class="heart-button" data-track-id="${track.id}">♥</button>
+            <button class="heart-button" data-genre="${genre}">♥</button>
           </div>
         </div>
         <div class="track-info">
@@ -224,35 +318,38 @@ class SpotifyAPI {
   setupHeartButtons() {
     document.querySelectorAll('.heart-button').forEach(button => {
       button.addEventListener('click', async (e) => {
-        const trackId = e.target.dataset.trackId;
-        await this.heartTrack(trackId);
+        const genre = e.target.dataset.genre;
+        await this.heartTrack(genre);
+        console.log(genre);
       });
     });
   }
 
-  // Send track ID to heart.php
-  async heartTrack(trackId) {
+  // Send genre to heart.php
+  async heartTrack(genre) {
     try {
       const response = await fetch('heart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ trackId })
+        body: JSON.stringify({ genre })
       });
 
       const data = await response.json();
       if (data.success) {
-        console.log('Track hearted successfully');
+        console.log('Genre preference updated successfully');
+        this.loadDefaultView(); // Reload view with updated preferences
       } else {
-        console.error('Error hearting track:', data.message);
+        console.error('Error updating genre preference:', data.message);
       }
     } catch (error) {
-      console.error('Error hearting track:', error);
+      console.error('Error updating genre preference:', error);
     }
   }
 
   // Search tracks based on user input
   async searchTracks(query) {
     try {
+      this.toggleSectionVisibility(true);
       const searchResponse = await this.fetchWithTokenRefresh(
         `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=20`,
         {
@@ -272,6 +369,23 @@ class SpotifyAPI {
       console.error("Error searching tracks:", error);
     }
   }
+
+  // Toggle section visibility based on search state
+  toggleSectionVisibility(isSearching) {
+    const recommendedTitle = document.querySelector('h2:first-of-type');
+    const discoverTitle = document.querySelector('h2:last-of-type');
+    const discoverGrid = document.getElementById('discover-new-grid');
+    
+    if (isSearching) {
+      recommendedTitle.textContent = 'Search Results';
+      discoverTitle.style.display = 'none';
+      discoverGrid.style.display = 'none';
+    } else {
+      recommendedTitle.textContent = 'Recommended for You';
+      discoverTitle.style.display = 'block';
+      discoverGrid.style.display = 'grid';
+    }
+  }
 }
 
 // Instantiate the API and set up search
@@ -286,6 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', (e) => {
       if (e.target.value.length > 2) {
         spotifyAPI.searchTracks(e.target.value);
+      }
+      if (e.target.value.length === 0) {
+        spotifyAPI.loadDefaultView();
       }
     });
   }
