@@ -28,8 +28,9 @@
 
     <main>
       <div class="main-container">
-        <div class="title">
-          <h1>Daily Dose of Music</h1>
+        <div class="title" style="display: flex;">
+          <h1>Daily Dose of Music</h1> 
+          <br><img src="girl.gif" style="width:200px;">
         </div>
         <div class="button-container">
           <button id="login">Login</button>
@@ -70,11 +71,6 @@
       console.error('Error checking user session:', error);
       return false;
     }
-    }
-
-    if (checkUserSession()) {
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('signup').style.display = 'none';
     }
   </script>
 </body>
