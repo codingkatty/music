@@ -47,6 +47,7 @@ class SpotifyAPI {
     document.querySelector('.spotify-modal').classList.remove('show');
   }
 
+<<<<<<< HEAD
   async checkUserSession() {
     try {
       const response = await fetch('get_prefrences.php', {
@@ -61,11 +62,14 @@ class SpotifyAPI {
     }
   }
 
+=======
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
   // Initialize the API by handling authentication
   async init() {
     try {
       const params = new URLSearchParams(window.location.search);
       const code = params.get('code');
+<<<<<<< HEAD
 
       // Check if we have valid tokens
       const hasValidTokens = this.accessToken &&
@@ -73,6 +77,15 @@ class SpotifyAPI {
         this.tokenExpiry &&
         new Date().getTime() < this.tokenExpiry;
 
+=======
+      
+      // Check if we have valid tokens
+      const hasValidTokens = this.accessToken && 
+                           this.refreshToken && 
+                           this.tokenExpiry && 
+                           new Date().getTime() < this.tokenExpiry;
+
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
       if (code) {
         await this.getAccessToken(code);
         window.history.replaceState({}, document.title, REDIRECT_URI);
@@ -87,6 +100,7 @@ class SpotifyAPI {
         localStorage.clear(); // Clear any stale tokens
         this.showModal();
       }
+<<<<<<< HEAD
 
       const isSignedIn = await this.checkUserSession();
       this.updateProfileIcon(isSignedIn);
@@ -102,6 +116,11 @@ class SpotifyAPI {
       profileIcon.style.backgroundImage = 'url("https://via.placeholder.com/150")';
     } else {
       profileIcon.innerHTML = '<a href="login.html">Sign In</a>';
+=======
+    } catch (error) {
+      console.error('Init error:', error);
+      this.showModal();
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
     }
   }
 
@@ -110,7 +129,11 @@ class SpotifyAPI {
     try {
       // Clear any existing tokens
       localStorage.clear();
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
       const state = Math.random().toString(36).substring(7);
       localStorage.setItem('spotify_auth_state', state);
 
@@ -120,7 +143,11 @@ class SpotifyAPI {
       url.searchParams.append('redirect_uri', REDIRECT_URI);
       url.searchParams.append('state', state);
       url.searchParams.append('scope', SCOPES);
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
       console.log('Redirecting to Spotify auth...');
       window.location.href = url.toString();
     } catch (error) {
@@ -250,6 +277,7 @@ class SpotifyAPI {
       this.showModal();
       throw error;
     }
+<<<<<<< HEAD
   }
 
   async getUserPreferences() {
@@ -263,10 +291,13 @@ class SpotifyAPI {
       console.error('Error fetching preferences:', error);
       return [];
     }
+=======
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
   }
 
   // Load recommended & popular tracks by user preferences
   async loadDefaultView() {
+<<<<<<< HEAD
     try {
       const userPreferences = await this.getUserPreferences();
       let seedGenres = userPreferences.length > 0 ?
@@ -276,6 +307,13 @@ class SpotifyAPI {
       this.toggleSectionVisibility(false);
 
       // First load recommended tracks
+=======
+    let seedGenres = 'pop,rock'; // Default genres
+    this.toggleSectionVisibility(false);
+
+    try {
+      // Load recommended tracks
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
       const recommendedResponse = await this.fetchWithTokenRefresh(
         `https://api.spotify.com/v1/search?q=genre:${encodeURIComponent(seedGenres)}&type=track&limit=15`,
         { method: "GET" }
@@ -286,6 +324,7 @@ class SpotifyAPI {
       }
 
       const recommendedData = await recommendedResponse.json();
+<<<<<<< HEAD
       console.log('Recommended tracks:', recommendedData.tracks?.items?.length);
 
       // If no recommended tracks, search by genres
@@ -326,6 +365,14 @@ class SpotifyAPI {
       
       const discoverResponse = await this.fetchWithTokenRefresh(
         `https://api.spotify.com/v1/search?q=genre:${encodeURIComponent(randomGenre)}&type=track&limit=15`,
+=======
+      this.displaySearchResults(recommendedData.tracks?.items || [], 'recommended-grid');
+
+      // Load discover tracks with random genre
+      const randomGenre = DISCOVER_GENRES[Math.floor(Math.random() * DISCOVER_GENRES.length)];
+      const discoverResponse = await this.fetchWithTokenRefresh(
+        `https://api.spotify.com/v1/search?q=genre:${randomGenre}&type=track&limit=15`,
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
         { method: "GET" }
       );
 
@@ -334,6 +381,7 @@ class SpotifyAPI {
       }
 
       const discoverData = await discoverResponse.json();
+<<<<<<< HEAD
       console.log('Discover tracks:', discoverData.tracks?.items?.length);
       
       const discoverGrid = document.getElementById('discover-new-grid');
@@ -345,6 +393,9 @@ class SpotifyAPI {
       discoverGrid.style.display = 'grid';
       await this.displaySearchResults(discoverData.tracks?.items || [], 'discover-new-grid');
       
+=======
+      this.displaySearchResults(discoverData.tracks?.items || [], 'discover-new-grid');
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
     } catch (error) {
       console.error("Error loading default view:", error);
     }
@@ -360,14 +411,20 @@ class SpotifyAPI {
       return;
     }
 
+<<<<<<< HEAD
     for (const track of tracks) {
       if (!track) continue;
+=======
+    tracks.forEach(async (track) => {
+      if (!track) return;
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
       const artUrl = track.album?.images?.[0]?.url || DEFAULT_ALBUM_ART;
 
       // Fetch artist information to get genre
       const artistId = track.artists[0]?.id;
       let genre = 'unknown';
       if (artistId) {
+<<<<<<< HEAD
         try {
           const artistResponse = await this.fetchWithTokenRefresh(
             `https://api.spotify.com/v1/artists/${artistId}`,
@@ -379,6 +436,15 @@ class SpotifyAPI {
           }
         } catch (error) {
           console.error(`Error fetching artist data for ID ${artistId}:`, error);
+=======
+        const artistResponse = await this.fetchWithTokenRefresh(
+          `https://api.spotify.com/v1/artists/${artistId}`,
+          { method: "GET" }
+        );
+        if (artistResponse.ok) {
+          const artistData = await artistResponse.json();
+          genre = artistData.genres[0] || 'unknown';
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
         }
       }
 
@@ -413,8 +479,13 @@ class SpotifyAPI {
     heartButtons.forEach(button => {
       button.addEventListener('click', async (e) => {
         const genre = e.target.dataset.genre;
+<<<<<<< HEAD
         console.log('Heart button clicked:', genre); // Debug log
         await this.heartTrack(genre);
+=======
+        await this.heartTrack(genre);
+        console.log(genre);
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
       });
     });
   }
@@ -432,6 +503,10 @@ class SpotifyAPI {
       const data = await response.json();
       if (data.success) {
         console.log('Genre preference updated successfully');
+<<<<<<< HEAD
+=======
+        this.loadDefaultView(); // Reload view with updated preferences
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
       } else {
         console.error('Error updating genre preference:', data.message);
       }
@@ -469,7 +544,11 @@ class SpotifyAPI {
     const recommendedTitle = document.querySelector('h2:first-of-type');
     const discoverTitle = document.querySelector('h2:last-of-type');
     const discoverGrid = document.getElementById('discover-new-grid');
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
     if (isSearching) {
       recommendedTitle.textContent = 'Search Results';
       discoverTitle.style.display = 'none';

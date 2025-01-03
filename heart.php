@@ -20,12 +20,17 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+<<<<<<< HEAD
+=======
+    // Check if user is logged in
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
     if (!isset($_SESSION['user_id'])) {
         echo json_encode(['success' => false, 'message' => 'User not logged in']);
         exit;
     }
 
     $userId = $_SESSION['user_id'];
+<<<<<<< HEAD
     $data = json_decode(file_get_contents('php://input'), true);
     $genre = $conn->real_escape_string($data['genre']);
 
@@ -64,6 +69,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else {
         echo json_encode(['success' => false, 'message' => 'User not found']);
+=======
+    
+    // Get JSON data
+    $data = json_decode(file_get_contents('php://input'), true);
+    $genre = $conn->real_escape_string($data['genre']);
+
+    // Update user preferences
+    $sql = "UPDATE users SET preferences = CONCAT_WS(',', preferences, ?) WHERE id = ? AND NOT FIND_IN_SET(?, preferences)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sis", $genre, $userId, $genre);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error updating preferences']);
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
     }
 }
 ?>

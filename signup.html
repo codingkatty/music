@@ -31,7 +31,11 @@
         }
 
         .form-group input {
+<<<<<<< HEAD
             width: 90%;
+=======
+            width: 100%;
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
             padding: 12px;
             border: none;
             border-radius: 8px;
@@ -113,6 +117,7 @@
             color: white;
             font-family: 'Inter', sans-serif;
         }
+<<<<<<< HEAD
 
         .error-message {
             color: #ff4444;
@@ -123,6 +128,8 @@
             font-family: 'Inter', sans-serif;
             display: none;
         }
+=======
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
     </style>
 </head>
 <body>
@@ -140,13 +147,23 @@
 
     <div class="signup-container">
         <h2>Create Account</h2>
+<<<<<<< HEAD
         <div id="errorMessage" class="error-message">You don't have an account yet. Please sign up.</div>
+=======
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
         <form action="signup.php" method="POST" id="signupForm">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
             <div class="form-group">
+<<<<<<< HEAD
+=======
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
@@ -221,6 +238,7 @@
                 return;
             }
         });
+<<<<<<< HEAD
 
         // Add at the end of the script
         const urlParams = new URLSearchParams(window.location.search);
@@ -228,6 +246,8 @@
         if (urlParams.get('error') === '1') {
             errorMsg.style.display = 'block';
         }
+=======
+>>>>>>> e229d951b9406629859f95d5053aa6f16049af2f
     </script>
 </body>
 </html>
